@@ -1,0 +1,10 @@
+# Visual Studio cache/options directory
+YemekSiparisKata/.vs
+YemekSiparisKata.NunitTest/.vs
+.vs
+
+# MSBuild Binary
+YemekSiparisKata/bin
+YemekSiparisKata/obj
+YemekSiparisKata.NunitTest/bin
+YemekSiparisKata.NunitTest/obj
