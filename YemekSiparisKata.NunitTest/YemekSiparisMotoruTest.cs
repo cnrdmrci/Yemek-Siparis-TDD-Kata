@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Moq;
 using NUnit.Framework;
 
 namespace YemekSiparisKata.NunitTest
@@ -8,10 +9,10 @@ namespace YemekSiparisKata.NunitTest
     [TestFixture]
     public class YemekSiparisMotoruTest
     {
-        private IRestoranIletisimci _restoranIletisimci;
-        private IBankaIletisimci _bankaIletisimci;
-        private IVeritabaniIletisimci _veritabaniIletisimci;
-        private ICagriMerkeziIletisimci _cagriMerkeziIletisimci;
+        private Mock<IRestoranIletisimci> _restoranIletisimci;
+        private Mock<IBankaIletisimci> _bankaIletisimci;
+        private Mock<IVeritabaniIletisimci> _veritabaniIletisimci;
+        private Mock<ICagriMerkeziIletisimci> _cagriMerkeziIletisimci;
         private YemekSiparisMotoru _yemekSiparisMotoru;
         private SiparisBilgi _siparisBilgiOdemeli;
         private SiparisBilgi _siparisBilgiOdemesiz;
@@ -19,7 +20,10 @@ namespace YemekSiparisKata.NunitTest
         [SetUp]
         public void Init()
         {
-            
+            _restoranIletisimci = new Mock<IRestoranIletisimci>();
+            _bankaIletisimci = new Mock<IBankaIletisimci>();
+            _veritabaniIletisimci = new Mock<IVeritabaniIletisimci>();
+            _cagriMerkeziIletisimci = new Mock<ICagriMerkeziIletisimci>();
         }
 
         [TearDown]
