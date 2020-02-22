@@ -6,5 +6,9 @@ namespace YemekSiparisKata
 {
     public class YemekSiparisMotoru
     {
+        public YemekSiparisMotoru(IRestoranIletisimci restoranIletisimciObject, IBankaIletisimci bankaIletisimciObject, IVeritabaniIletisimci veritabaniIletisimciObject, ICagriMerkeziIletisimci cagriMerkeziIletisimci)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
