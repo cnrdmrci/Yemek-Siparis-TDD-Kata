@@ -14,8 +14,8 @@ namespace YemekSiparisKata.NunitTest
         private Mock<IVeritabaniIletisimci> _veritabaniIletisimci;
         private Mock<ICagriMerkeziIletisimci> _cagriMerkeziIletisimci;
         private YemekSiparisMotoru _yemekSiparisMotoru;
-        private SiparisBilgileri _siparisBilgiOdemeli;
-        private SiparisBilgileri _siparisBilgiOdemesiz;
+        private SiparisBilgileri _siparisBilgiOnlineOdemeli;
+        private SiparisBilgileri _siparisBilgiOnlineOdemesiz;
 
         [SetUp]
         public void Init()
@@ -26,7 +26,7 @@ namespace YemekSiparisKata.NunitTest
             _cagriMerkeziIletisimci = new Mock<ICagriMerkeziIletisimci>();
             _yemekSiparisMotoru = new YemekSiparisMotoru(_restoranIletisimci.Object,_bankaIletisimci.Object,_veritabaniIletisimci.Object,_cagriMerkeziIletisimci.Object);
             
-            _siparisBilgiOdemeli = new SiparisBilgileri
+            _siparisBilgiOnlineOdemeli = new SiparisBilgileri
             {
                 KrediKartiBilgileri = new KrediKartiBilgileri(),
                 OdemeTipi = SiparisOdemeTip.OnlineKrediKarti,
@@ -34,7 +34,7 @@ namespace YemekSiparisKata.NunitTest
                 ToplamTutar = 100
             };
 
-            _siparisBilgiOdemeli = new SiparisBilgileri
+            _siparisBilgiOnlineOdemesiz = new SiparisBilgileri
             {
                 KrediKartiBilgileri = new KrediKartiBilgileri(),
                 OdemeTipi = SiparisOdemeTip.KapidaKrediKarti,
@@ -51,82 +51,82 @@ namespace YemekSiparisKata.NunitTest
         public void SiparisGeldiginde_IlgiliRestoranaYonlendirilir()
         {
             //when
-            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOdemesiz);
+            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOnlineOdemesiz);
 
             //then
-            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOdemesiz));
+            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOnlineOdemesiz));
         }
 
         [Test]
         public void OnlineOdemeOldugunda_BankayaCekimIstegiGonderilir()
         {
             //when
-            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOdemeli);
+            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOnlineOdemeli);
             
             //then
-            _bankaIletisimci.Verify(x=>x.CekimYap(_siparisBilgiOdemeli.KrediKartiBilgileri,_siparisBilgiOdemeli.ToplamTutar));
+            _bankaIletisimci.Verify(x=>x.CekimYap(_siparisBilgiOnlineOdemeli.KrediKartiBilgileri,_siparisBilgiOnlineOdemeli.ToplamTutar));
         }
 
         [Test]
         public void BankaCekimIstegiBasarisizOlursa_RestoranaSiparisVerilmez()
         {
             //given
-            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOdemeli.KrediKartiBilgileri, _siparisBilgiOdemeli.ToplamTutar)).Returns(false);
+            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOnlineOdemeli.KrediKartiBilgileri, _siparisBilgiOnlineOdemeli.ToplamTutar)).Returns(false);
 
             //when
-            SiparisSonuc siparisSonucu = _yemekSiparisMotoru.SiparisVer(_siparisBilgiOdemeli);
+            SiparisSonuc siparisSonucu = _yemekSiparisMotoru.SiparisVer(_siparisBilgiOnlineOdemeli);
 
             //then
             Assert.IsFalse(siparisSonucu.SiparisBasariliMi);
-            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOdemeli),Times.Never);
+            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOnlineOdemeli),Times.Never);
         }
 
         [Test]
         public void BankaCekimIstegiBasariliOlursa_RestoranaSiparisVerilir()
         {
             //given
-            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOdemeli.KrediKartiBilgileri, _siparisBilgiOdemeli.ToplamTutar)).Returns(true);
+            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOnlineOdemeli.KrediKartiBilgileri, _siparisBilgiOnlineOdemeli.ToplamTutar)).Returns(true);
 
             //when
-            SiparisSonuc siparisSonucu = _yemekSiparisMotoru.SiparisVer(_siparisBilgiOdemeli);
+            SiparisSonuc siparisSonucu = _yemekSiparisMotoru.SiparisVer(_siparisBilgiOnlineOdemeli);
 
             //then
             Assert.IsTrue(siparisSonucu.SiparisBasariliMi);
-            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOdemeli));
+            _restoranIletisimci.Verify(x=>x.SiparisBilgileriniGonder(_siparisBilgiOnlineOdemeli));
         }
 
         [Test]
         public void BankadanSonucDondugunde_VeritabaninaKayitEdilir()
         {
             //given 
-            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOdemeli.KrediKartiBilgileri, _siparisBilgiOdemeli.ToplamTutar)).Returns(true);
+            _bankaIletisimci.Setup(x => x.CekimYap(_siparisBilgiOnlineOdemeli.KrediKartiBilgileri, _siparisBilgiOnlineOdemeli.ToplamTutar)).Returns(true);
             
             //when
-            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOdemeli);
+            _yemekSiparisMotoru.SiparisVer(_siparisBilgiOnlineOdemeli);
 
             //then
-            _veritabaniIletisimci.Verify(x=>x.VeritabaninaKaydet(_siparisBilgiOdemeli));
+            _veritabaniIletisimci.Verify(x=>x.VeritabaninaKaydet(_siparisBilgiOnlineOdemeli));
         }
 
         [Test]
         public void RestoranSiparisiOnaylarsa_VeritabaninaKaydet()
         {
             //when
-            _yemekSiparisMotoru.RestoranCevabiniIsle(_siparisBilgiOdemeli, true);
+            _yemekSiparisMotoru.RestoranCevabiniIsle(_siparisBilgiOnlineOdemeli, true);
 
             //then
-            _veritabaniIletisimci.Verify(x=>x.SiparisiOnaylandiOlarakKaydet(_siparisBilgiOdemeli));
+            _veritabaniIletisimci.Verify(x=>x.SiparisiOnaylandiOlarakKaydet(_siparisBilgiOnlineOdemeli));
         }
 
         [Test]
         public void RestoranSiparisiReddederse_VeritabaninaKaydet_RestoranaBilgiVer()
         {
             //when
-            _yemekSiparisMotoru.RestoranCevabiniIsle(_siparisBilgiOdemeli, false);
+            _yemekSiparisMotoru.RestoranCevabiniIsle(_siparisBilgiOnlineOdemeli, false);
 
             //then
-            _veritabaniIletisimci.Verify(x=>x.SiparisiIptalOlarakKaydet(_siparisBilgiOdemeli));
-            _cagriMerkeziIletisimci.Verify(x=>x.SiparisIptalBilgisiIlet(_siparisBilgiOdemeli));
+            _veritabaniIletisimci.Verify(x=>x.SiparisiIptalOlarakKaydet(_siparisBilgiOnlineOdemeli));
+            _cagriMerkeziIletisimci.Verify(x=>x.SiparisIptalBilgisiIlet(_siparisBilgiOnlineOdemeli));
         }
 
         [Test]
