@@ -1,3 +1,20 @@
+# Test Driven Development Kata
+
+### Amaç
+Bağımlılığı azaltarak kontrollü ve geliştirilebilir kod yazmak.
+
+### Tanım
+Yemek siparişi yapan bir işlem oluşturmak amacıyla geliştirme yapıldı. 
+Sipariş yapılırken; 
+- restoran, 
+- banka, 
+- çağrı merkezi,
+- veritabanı
+ile iletişim kuruldu. Bu bağımlılıkları ayırarak test işlemlerini yaptık ve ardından kodu yazdık.
+
+> Test işlemleri için Nunit ve mocklamak için Moq kütüphanesini kullandık.
+
+
 # Unit Testing  (Nunit)
 
 ### Unit testing avantajları
